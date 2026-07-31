@@ -1,0 +1,136 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyPgS9zvoERzrHyHLHdW0LbD",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Jaisuryan-web/IBM_DataVisualization_final_project/blob/main/IBM_DV_FP6.webP\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 19,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 672
+        },
+        "id": "9rPaX3AyzzVV",
+        "outputId": "13c347d0-b8a7-46d5-9a75-5f93691a0ef8"
+      },
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "<IPython.core.display.Javascript object>"
+            ],
+            "application/javascript": [
+              "(async (port, path, width, height, cache, element) => {\n",
+              "    if (!google.colab.kernel.accessAllowed && !cache) {\n",
+              "      return;\n",
+              "    }\n",
+              "    element.appendChild(document.createTextNode(''));\n",
+              "    const url = await google.colab.kernel.proxyPort(port, {cache});\n",
+              "    const iframe = document.createElement('iframe');\n",
+              "    iframe.src = new URL(path, url).toString();\n",
+              "    iframe.height = height;\n",
+              "    iframe.width = width;\n",
+              "    iframe.style.border = 0;\n",
+              "    iframe.allow = [\n",
+              "        'accelerometer',\n",
+              "        'autoplay',\n",
+              "        'camera',\n",
+              "        'clipboard-read',\n",
+              "        'clipboard-write',\n",
+              "        'gyroscope',\n",
+              "        'magnetometer',\n",
+              "        'microphone',\n",
+              "        'serial',\n",
+              "        'usb',\n",
+              "        'xr-spatial-tracking',\n",
+              "    ].join('; ');\n",
+              "    element.appendChild(iframe);\n",
+              "  })(8050, \"/\", \"100%\", 650, false, window.element)"
+            ]
+          },
+          "metadata": {}
+        }
+      ],
+      "source": [
+        "import dash\n",
+        "from dash import dcc, html\n",
+        "from dash.dependencies import Input, Output\n",
+        "import plotly.express as px\n",
+        "import pandas as pd\n",
+        "\n",
+        "# 1. Create simple sample data\n",
+        "data = {\n",
+        "    \"Year\": [2018, 2019, 2020, 2021, 2022, 2023],\n",
+        "    \"Sales\": [30, 45, 15, 40, 60, 75],\n",
+        "    \"Profit\": [10, 20, 5, 15, 25, 30]\n",
+        "}\n",
+        "df = pd.DataFrame(data)\n",
+        "\n",
+        "# 2. Initialize the app\n",
+        "app = dash.Dash(__name__)\n",
+        "\n",
+        "# 3. Create a clean, straightforward layout\n",
+        "app.layout = html.Div([\n",
+        "    html.H1(\"Project Dashboard\", style={'textAlign': 'center'}),\n",
+        "\n",
+        "    html.Label(\"Select Metric to Display:\"),\n",
+        "    dcc.Dropdown(\n",
+        "        id='metric-dropdown',\n",
+        "        options=[\n",
+        "            {'label': 'Yearly Sales', 'value': 'Sales'},\n",
+        "            {'label': 'Yearly Profit', 'value': 'Profit'}\n",
+        "        ],\n",
+        "        value='Sales',  # Default starting value\n",
+        "        style={'width': '50%'}\n",
+        "    ),\n",
+        "\n",
+        "    dcc.Graph(id='main-graph')\n",
+        "])\n",
+        "\n",
+        "# 4. Connect the dropdown to the graph\n",
+        "@app.callback(\n",
+        "    Output('main-graph', 'figure'),\n",
+        "    Input('metric-dropdown', 'value')\n",
+        ")\n",
+        "def update_graph(selected_metric):\n",
+        "    # Create an interactive line chart dynamically\n",
+        "    fig = px.line(\n",
+        "        df,\n",
+        "        x='Year',\n",
+        "        y=selected_metric,\n",
+        "        title=f\"Trend Analysis: {selected_metric}\"\n",
+        "    )\n",
+        "    return fig\n",
+        "\n",
+        "# 5. Run the server\n",
+        "if __name__ == '__main__':\n",
+        "    app.run(debug=True)"
+      ]
+    }
+  ]
+}
